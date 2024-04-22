@@ -1,11 +1,12 @@
 namespace Fire_Emblem;
+using Fire_Emblem.Skills;
 
 public class Team
 {
     public string Name { get; set; }
     public List<Unit> Units { get; set; } = new List<Unit>();
     
-    public static List<Team> ReadTeams(string file)
+    public static List<Team> ReadTeams(string file, Dictionary<string, BasicSkill> skills)
     {
         var teams = new List<Team>();
         Team currentTeam = null;
@@ -24,13 +25,21 @@ public class Team
             {
                 var parts = line.Split(new[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
                 var unitName = parts[0].Trim();
-                var abilities = parts.Length > 1 ? parts[1].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries) : new string[0];
-
+                List<string> abilities = parts.Length > 1 
+                    ? parts[1].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(ability => ability.Trim())  // Trimming each ability to clean up whitespace
+                        .ToList()
+                    : new List<string>();
+                
+                List<BasicSkill> realSkills = SkillManager.stringToSkill(abilities, skills);
                 var unit = new Unit
                 {
                     Name = unitName,
-                    Abilities = new List<string>(abilities)
+                    Abilities = realSkills
                 };
+                //Console.WriteLine($"Unidad {unitName} con habilidades {string.Join(", ", abilities)}");
+                
+                //Console.WriteLine($"Unidad {unitName} con habilidades {string.Join(", ", abilities)}"); ACA necesito inicializar las habilidades
                 currentTeam.Units.Add(unit);
             }
         }

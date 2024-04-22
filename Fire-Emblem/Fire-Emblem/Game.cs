@@ -1,4 +1,6 @@
 ﻿using Fire_Emblem_View;
+using Fire_Emblem.Skills;
+
 
 namespace Fire_Emblem;
 
@@ -31,12 +33,14 @@ public class Game
         string fileName = files[int.Parse(input)];
         string filePath = $"{_teamsFolder}/{fileName}";
         
-
-        var teams = Team.ReadTeams(filePath);
+        var skillManager = new SkillManager(); //necesita ser clase?
+        var skills = skillManager.LoadSkills("skills.json");
+        
+        //Antes de esto, leer las habilidades
+        var teams = Team.ReadTeams(filePath, skills);
         if (!teams.All(team => team.IsTeamValid()))
         {
             _view.WriteLine("Archivo de equipos no válido");
-
             return;
         }
         
@@ -50,11 +54,10 @@ public class Game
             }
         }
         
+        
         // Funciona ok, ahora hacer el combate
         Battle battle = new Battle(teams[0], teams[1]);
         battle.Start(_view);
-        
-        
     }
     
 

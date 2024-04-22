@@ -14,11 +14,36 @@ public class Character
     public int Def { get; set; }
     public int Res { get; set; }
     
+    
     public static List<Character> ReadCharacters(string file)
     {
         string json = File.ReadAllText(file);
         var characters = JsonConvert.DeserializeObject<List<Character>>(json);
         return characters;
+    }
+    
+    public void ModifyStat(string stat, int modifier)
+    {
+        switch (stat)
+        {
+            case "Hp":
+                Hp += modifier;
+                break;
+            case "Atk":
+                Atk += modifier;
+                break;
+            case "Spd":
+                Spd += modifier;
+                break;
+            case "Def":
+                Def += modifier;
+                break;
+            case "Res":
+                Res += modifier;
+                break;
+            default:
+                throw new ArgumentException($"Stat {stat} not found.");
+        }
     }
     
     public Character Clone()
