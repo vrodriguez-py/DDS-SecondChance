@@ -6,6 +6,7 @@ public class Game
 {
     private View _view;
     private string _teamsFolder;
+    
 
 
     public Game(View view, string teamsFolder)
@@ -23,22 +24,13 @@ public class Game
         _view.WriteLine("Elige un archivo para cargar los equipos");
 
         // Cambiar y crear funcion
-        for (int i = 0; i < 500; i++)
-        {
-            string file = i.ToString();
-            if (file.Length == 1)
-                file = $"00{file}";
-            else if (file.Length == 2)
-                file = $"0{file}";
-
-            _view.WriteLine($"{i}: {file}.txt");
-        }
+        List<string> files = FileHelper.PrintFiles(_teamsFolder, _view);
         
         // Crear funcion
         string input = _view.ReadLine();
-        input = input.PadLeft(3, '0');
-        string filePath = Path.Combine(_teamsFolder, $"{input}.txt");
-
+        string fileName = files[int.Parse(input)];
+        string filePath = $"{_teamsFolder}/{fileName}";
+        
 
         var teams = Team.ReadTeams(filePath);
         if (!teams.All(team => team.IsTeamValid()))
